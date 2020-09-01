@@ -1,0 +1,17 @@
+name: Paperbag
+version: ${project.version}
+main: me.gadse.paperbag.Paperbag
+api-version: "1.13"
+authors: [Gadse]
+description: Backpacks for 1.13+
+
+commands:
+  backpack:
+    description: Main command for the plugin Paperbag
+    usage: /backpack [reload | give <player> | menu]
+    aliases: paperbag
+    permission: paperbag.admin
+
+permissions:
+  paperbag.admin:
+    default: op

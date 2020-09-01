@@ -1,0 +1,191 @@
+####################
+#     MESSAGES     #
+####################
+
+messages:
+  prefix: "&d&lBACKPACK &8» &7"
+  error: "During execution an error happened: &f%error%"
+  reload: "Configuration reloaded. (&f%time% &7ms)"
+  target_offline: "The player &f%target% &7is offline."
+  give: "You gave &f%target% &7a backpack."
+  receive: "You received a backpack!"
+  not_enough_money: "You can't afford that."
+  paid: "You paid $&e%cost% &7to upgrade your backpack."
+  backpack_not_owner: "You're not the owner of this backpack."
+  death_chest_spawn: "You died in &f%world% &7/ &f%X% &7/ &f%Y% &7/ &f%Z%&7. You have &f15 Minuten &7to visit your grave, before it disappears."
+  death_chest_not_owner: "You can't open the grave of &f%owner%&7."
+  death_chest_cost: "It costs $&e%cost% &7to open your grave. Click again to confirm."
+
+####################
+# PLUGIN  SETTINGS #
+####################
+
+death_chest:
+  # Cost to claim chest, set to 0 to disable
+  cost: 5000
+  # In minutes
+  despawn: 15
+
+backpack-title: "Rucksack von %player%"
+backpacks:
+  # Amount of rows
+  1:
+    # Material of the item
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+    material: player_head
+    # Texture of the item, only applicable to player heads
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODM1MWU1MDU5ODk4MzhlMjcyODdlN2FmYmM3Zjk3ZTc5NmNhYjVmMzU5OGE3NjE2MGMxMzFjOTQwZDBjNSJ9fX0="
+    # Displaying name of the item
+    displayName: "&fTiny backpack"
+    # Lore / Description of the item
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f9 &7Slots"
+    # Cost to upgrade to the next level
+    cost: 5000
+  2:
+    material: player_head
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNjMTUzYzM5MWMzNGUyZDMyOGE2MDgzOWU2ODNhOWY4MmFkMzA0ODI5OWQ4YmM2YTM5ZTZmOTE1Y2M1YSJ9fX0="
+    displayName: "&fSmall backpack"
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f18 &7Slots"
+    cost: 10000
+  3:
+    material: player_head
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIyNGIyYzczOTFlYjViZmNiMjc4NDMxZDVjODI3Y2IyNjM0OTUyNmM3YmM1MzViMWU5NWY2ZGY5ZjNmZGYzIn19fQ=="
+    displayName: "&fNormal backpack"
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f27 &7Slots"
+    cost: 25000
+  4:
+    material: player_head
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzY1NzVmY2NjYWRhZTg3YzA4NDJmNTNkZTVlMGZmYTc1ODUxNjk2ODY2ZDgxZTFiNzI4MjgzNDhkYjUyNTYifX19"
+    displayName: "&fGood backpack"
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f36 &7Slots"
+    cost: 50000
+  5:
+    material: player_head
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM3YTM1NTIyZjY3YjJhZjkyMzQ1NTkyODQ2YjcwMmI5YWZiOWQ3YzhkYmFkNWVhMTUwNjczYzllNDRkZTMifX19"
+    displayName: "&fBig backpack"
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f45 &7Slots"
+    cost: 100000
+  6:
+    material: player_head
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODVlNGY5ZGE2OGM4MWZhNDgxZWVjZGNhNDhhMTM4Y2VjZGUyY2RkZmZlZWFlODRhYjFhZmQyNGEzNjNlMDI4In19fQ=="
+    displayName: "&fLarge backpack"
+    lore:
+      - "&7Hold this backpack in your hand"
+      - "&7and open it with a &fright-click&7."
+      - "&r"
+      - "&f54 &7Slots"
+
+gui:
+  size: 54
+  title: "&8&lUPGRADE BACKPACK"
+  info:
+    slot: 0
+    material: knowledge_book
+    displayName: "&a&lExplanation"
+    lore:
+      - "&7Welcome in the interface to upgrade"
+      - "&7your backpack! Upgrading works"
+      - "&7through &f3 &7easy steps:"
+      - "&f - &7Put the backpack in the open slot"
+      - "&f - &7Click \"&eUpgrade backpack&7\""
+      - "&f - &7Take the upgraded backpack out"
+      - "&r"
+      - "&7The price increases with each upgrade!"
+  upgrade:
+    slot: 4
+    material: gold_ingot
+    displayName: "&e&lUpgrade backpack"
+    lore:
+      - "&7Upgrade your backpack"
+      - "&7by paying $&f%cost%&7."
+      - "&r"
+      - "&7Next size: &f%size% &7slots"
+  upgrade_invalid:
+    material: gold_nugget
+    displayName: "&e&lUpgrade backpack"
+    lore:
+      - "&7Please put your backpack in the"
+      - "&7open slot for more info."
+  upgrade_max:
+    material: gold_block
+    displayName: "&e&lUpgrade backpack"
+    lore:
+      - "&c&l[!]&7 UPGRADE NOT POSSIBLE &c&l[!]"
+      - "&7Your backpack reached the highest upgrade."
+  close:
+    slot: 8
+    material: structure_void
+    displayName: "&c&lClose"
+    lore:
+      - "&7Close the menu."
+  magic:
+    slot: 19
+    material: enchanted_book
+    displayName: "&5&lMagic"
+    lore:
+      - "&7A hint of magic"
+      - "&7that stores your items."
+  chest:
+    slot: 25
+    material: chest_minecart
+    displayName: "&f&lStorage"
+    lore:
+      - "&7Provides the storage for the items."
+  backpack:
+    slot: 40
+  fill:
+    material: light_gray_stained_glass_pane
+    displayName: "&r"
+  other_fillers:
+    yellow:
+      slots:
+        - 13
+        - 22
+      material: yellow_stained_glass_pane
+      displayName: "&r"
+    purple:
+      slots:
+        - 28
+        - 37
+        - 38
+      material: purple_stained_glass_pane
+      displayName: "&r"
+    white:
+      slots:
+        - 34
+        - 43
+        - 42
+      material: white_stained_glass_pane
+      displayName: "&r"
+    gray:
+      slots:
+        - 30
+        - 31
+        - 32
+        - 39
+        - 41
+        - 48
+        - 49
+        - 50
+      material: gray_stained_glass_pane
+      displayName: "&r"
