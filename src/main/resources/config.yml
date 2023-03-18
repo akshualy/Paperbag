@@ -3,30 +3,21 @@
 ####################
 
 messages:
-  prefix: "&d&lBACKPACK &8» &7"
+  prefix: "&8(&d&lBACKPACK&8) &7"
   error: "During execution an error happened: &f%error%"
   reload: "Configuration reloaded. (&f%time% &7ms)"
   target_offline: "The player &f%target% &7is offline."
   give: "You gave &f%target% &7a backpack."
   receive: "You received a backpack!"
-  not_enough_money: "You can't afford that."
-  paid: "You paid $&e%cost% &7to upgrade your backpack."
+  not_enough_materials: "You can't afford that."
+  paid: "You gave away &e%cost% &7to upgrade your backpack."
   backpack_not_owner: "You're not the owner of this backpack."
-  death_chest_spawn: "You died in &f%world% &7/ &f%X% &7/ &f%Y% &7/ &f%Z%&7. You have &f15 Minuten &7to visit your grave, before it disappears."
-  death_chest_not_owner: "You can't open the grave of &f%owner%&7."
-  death_chest_cost: "It costs $&e%cost% &7to open your grave. Click again to confirm."
 
 ####################
 # PLUGIN  SETTINGS #
 ####################
 
-death_chest:
-  # Cost to claim chest, set to 0 to disable
-  cost: 5000
-  # In minutes
-  despawn: 15
-
-backpack-title: "Rucksack von %player%"
+backpack-title: "Backpack of %player%"
 backpacks:
   # Amount of rows
   1:
@@ -42,9 +33,12 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f9 &7Slots"
+      - "&7Slots: &f9"
+      - "&7Owner: &f%player%"
     # Cost to upgrade to the next level
-    cost: 5000
+    cost:
+      # item_name: amount
+      iron_ingot: 64
   2:
     material: player_head
     texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNjMTUzYzM5MWMzNGUyZDMyOGE2MDgzOWU2ODNhOWY4MmFkMzA0ODI5OWQ4YmM2YTM5ZTZmOTE1Y2M1YSJ9fX0="
@@ -53,8 +47,10 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f18 &7Slots"
-    cost: 10000
+      - "&7Slots: &f18"
+      - "&7Owner: &f%player%"
+    cost:
+      diamond: 32
   3:
     material: player_head
     texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIyNGIyYzczOTFlYjViZmNiMjc4NDMxZDVjODI3Y2IyNjM0OTUyNmM3YmM1MzViMWU5NWY2ZGY5ZjNmZGYzIn19fQ=="
@@ -63,8 +59,10 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f27 &7Slots"
-    cost: 25000
+      - "&7Slots: &f27"
+      - "&7Owner: &f%player%"
+    cost:
+      diamond: 64
   4:
     material: player_head
     texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzY1NzVmY2NjYWRhZTg3YzA4NDJmNTNkZTVlMGZmYTc1ODUxNjk2ODY2ZDgxZTFiNzI4MjgzNDhkYjUyNTYifX19"
@@ -73,8 +71,10 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f36 &7Slots"
-    cost: 50000
+      - "&7Slots: &f36"
+      - "&7Owner: &f%player%"
+    cost:
+      netherite_ingot: 16
   5:
     material: player_head
     texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM3YTM1NTIyZjY3YjJhZjkyMzQ1NTkyODQ2YjcwMmI5YWZiOWQ3YzhkYmFkNWVhMTUwNjczYzllNDRkZTMifX19"
@@ -83,8 +83,10 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f45 &7Slots"
-    cost: 100000
+      - "&7Slots: &f45"
+      - "&7Owner: &f%player%"
+    cost:
+      netherite_ingot: 32
   6:
     material: player_head
     texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODVlNGY5ZGE2OGM4MWZhNDgxZWVjZGNhNDhhMTM4Y2VjZGUyY2RkZmZlZWFlODRhYjFhZmQyNGEzNjNlMDI4In19fQ=="
@@ -93,7 +95,8 @@ backpacks:
       - "&7Hold this backpack in your hand"
       - "&7and open it with a &fright-click&7."
       - "&r"
-      - "&f54 &7Slots"
+      - "&7Slots: &f54"
+      - "&7Owner: &f%player%"
 
 gui:
   size: 54
@@ -107,6 +110,9 @@ gui:
       - "&7your backpack! Upgrading works"
       - "&7through &f3 &7easy steps:"
       - "&f - &7Put the backpack in the open slot"
+      - "&f    &7in the bottom middle"
+      - "&f - &7Put the upgrade material in the open slot"
+      - "&f    &7to the left"
       - "&f - &7Click \"&eUpgrade backpack&7\""
       - "&f - &7Take the upgraded backpack out"
       - "&r"
@@ -117,7 +123,7 @@ gui:
     displayName: "&e&lUpgrade backpack"
     lore:
       - "&7Upgrade your backpack"
-      - "&7by paying $&f%cost%&7."
+      - "&7with &e%cost%&7."
       - "&r"
       - "&7Next size: &f%size% &7slots"
   upgrade_invalid:
@@ -138,13 +144,6 @@ gui:
     displayName: "&c&lClose"
     lore:
       - "&7Close the menu."
-  magic:
-    slot: 19
-    material: enchanted_book
-    displayName: "&5&lMagic"
-    lore:
-      - "&7A hint of magic"
-      - "&7that stores your items."
   chest:
     slot: 25
     material: chest_minecart
@@ -153,6 +152,8 @@ gui:
       - "&7Provides the storage for the items."
   backpack:
     slot: 40
+  cost_input:
+    slot: 19
   fill:
     material: light_gray_stained_glass_pane
     displayName: "&r"
@@ -165,6 +166,9 @@ gui:
       displayName: "&r"
     purple:
       slots:
+        - 10
+        - 18
+        - 20
         - 28
         - 37
         - 38

@@ -10,12 +10,9 @@ public enum Messages {
     TARGET_OFFLINE,
     GIVE,
     RECEIVE,
-    NOT_ENOUGH_MONEY,
+    NOT_ENOUGH_MATERIALS,
     PAID,
-    BACKPACK_NOT_OWNER,
-    DEATH_CHEST_SPAWN,
-    DEATH_CHEST_NOT_OWNER,
-    DEATH_CHEST_COST;
+    BACKPACK_NOT_OWNER;
 
     private String message = "ERROR LOADING MESSAGE FOR " + name();
 

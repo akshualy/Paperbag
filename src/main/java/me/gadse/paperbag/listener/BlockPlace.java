@@ -17,8 +17,9 @@ public class BlockPlace implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.getItemInHand().getItemMeta() == null
                 || !event.getItemInHand().getItemMeta().getPersistentDataContainer()
-                .has(plugin.getBackpackSizeKey(), PersistentDataType.BYTE))
+                .has(plugin.getBackpackSizeKey(), PersistentDataType.BYTE)) {
             return;
+        }
         event.setCancelled(true);
     }
 }

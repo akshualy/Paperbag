@@ -18,10 +18,13 @@ public class BlockDispense implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
         ItemMeta itemMeta = event.getItem().getItemMeta();
-        if (itemMeta == null)
+        if (itemMeta == null) {
             return;
+        }
+
         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-        if (container.has(plugin.getBackpackSizeKey(), PersistentDataType.BYTE))
+        if (container.has(plugin.getBackpackSizeKey(), PersistentDataType.BYTE)) {
             event.setCancelled(true);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package me.gadse.paperbag.inventory;
 
 import lombok.Getter;
+import lombok.NonNull;
 import me.gadse.paperbag.Paperbag;
 import me.gadse.paperbag.util.Messages;
 import me.gadse.paperbag.util.Pair;
@@ -9,7 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class GUIUpgrade implements IGUI {
 
@@ -26,7 +28,7 @@ public class GUIUpgrade implements IGUI {
     private final ItemStack upgradeItem, upgradeInvalidItem, upgradeMaxItem;
     private final int upgradeSlot, closeSlot;
     @Getter
-    private final int backpackSlot;
+    private final int backpackSlot, costSlot;
 
     public GUIUpgrade(Paperbag plugin) {
         this.plugin = plugin;
@@ -40,11 +42,11 @@ public class GUIUpgrade implements IGUI {
         );
 
         ItemStack fill = plugin.getItemStackFromConfig("gui.fill");
-        for (int i = 0; i < inventory.getSize(); i++)
+        for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, fill);
+        }
 
         inventory.setItem(guiSection.getInt("info.slot", 0), plugin.getItemStackFromConfig("gui.info"));
-        inventory.setItem(guiSection.getInt("magic.slot", 19), plugin.getItemStackFromConfig("gui.magic"));
         inventory.setItem(guiSection.getInt("chest.slot", 25), plugin.getItemStackFromConfig("gui.chest"));
 
         closeSlot = guiSection.getInt("close.slot", 8);
@@ -53,6 +55,9 @@ public class GUIUpgrade implements IGUI {
         backpackSlot = guiSection.getInt("backpack.slot", 40);
         inventory.setItem(backpackSlot, new ItemStack(Material.AIR));
 
+        costSlot = guiSection.getInt("cost.slot", 19);
+        inventory.setItem(costSlot, new ItemStack(Material.AIR));
+
         upgradeSlot = guiSection.getInt("upgrade.slot", 4);
         upgradeItem = plugin.getItemStackFromConfig("gui.upgrade");
         upgradeInvalidItem = plugin.getItemStackFromConfig("gui.upgrade_invalid");
@@ -60,8 +65,9 @@ public class GUIUpgrade implements IGUI {
         inventory.setItem(upgradeSlot, upgradeInvalidItem);
 
         ConfigurationSection otherFillerSection = guiSection.getConfigurationSection("other_fillers");
-        if (otherFillerSection == null)
+        if (otherFillerSection == null) {
             return;
+        }
 
         otherFillerSection.getKeys(false).forEach(fillKey -> {
             ItemStack otherFill = plugin.getItemStackFromConfig("gui.other_fillers." + fillKey);
@@ -70,59 +76,110 @@ public class GUIUpgrade implements IGUI {
     }
 
     @Override
-    public void onClick(HumanEntity humanEntity, InventoryClickEvent event) {
-        if (event.getClickedInventory() == null)
-            return;
+    public void onDrag(HumanEntity player, InventoryDragEvent event) {
+        boolean bottomDrag = true;
+        for (Integer rawSlot : event.getRawSlots()) {
+            if (rawSlot < event.getView().getTopInventory().getSize()) {
+                bottomDrag = false;
+                break;
+            }
+        }
 
-        if (event.getView().getBottomInventory().equals(event.getClickedInventory()) && !event.isShiftClick())
+        if (bottomDrag) {
             return;
+        }
+
+        if (event.getRawSlots().size() > 1) {
+            event.setCancelled(true);
+            return;
+        }
+
+        int slot = event.getRawSlots().toArray(new Integer[1])[0];
+        if (slot == costSlot) {
+            return;
+        }
+
+        if (slot == backpackSlot) {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> updateUpgradeItem(event.getWhoClicked()), 1L);
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @Override
+    public void onClick(HumanEntity humanEntity, InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) {
+            return;
+        }
+
+        if (event.getView().getBottomInventory().equals(event.getClickedInventory()) && !event.isShiftClick()) {
+            return;
+        }
 
         int rawSlot = event.getRawSlot();
 
         Player player = (Player) humanEntity;
         if (event.isShiftClick() || rawSlot == backpackSlot) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                    updateUpgradeItem(player.getOpenInventory().getTopInventory()), 1L);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> updateUpgradeItem(player), 1L);
+            return;
+        }
+
+        if (rawSlot == costSlot) {
             return;
         }
 
         if (rawSlot == closeSlot) {
             event.setCancelled(true);
-            plugin.getServer().getScheduler().runTaskLater(plugin, humanEntity::closeInventory, 1L);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> humanEntity.closeInventory(), 1L);
             return;
         }
 
         if (rawSlot == upgradeSlot) {
             event.setCancelled(true);
             ItemStack itemStack = event.getClickedInventory().getItem(backpackSlot);
-            if (itemStack == null || itemStack.getItemMeta() == null)
+            if (itemStack == null || itemStack.getItemMeta() == null) {
                 return;
+            }
 
             PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
 
             byte rows = container.getOrDefault(plugin.getBackpackSizeKey(), PersistentDataType.BYTE, (byte) 0);
-            int cost = container.getOrDefault(plugin.getBackpackCostKey(), PersistentDataType.INTEGER, -1);
-            if (rows == 0 || rows == 6 || cost == -1)
+            ItemStack upgradeCost = plugin.getBackpackUpgradeCost().get((int) rows);
+            if (rows == 0 || rows == 6 || upgradeCost == null) {
                 return;
+            }
 
-            ItemStack newItem = plugin.getBackpackItems().get(rows + 1);
-            if (newItem == null)
+            String ownerUID = container.get(plugin.getOwnerKey(), PersistentDataType.STRING);
+            if (ownerUID == null || !UUID.fromString(ownerUID).equals(player.getUniqueId())) {
                 return;
+            }
+
+            ItemStack newItem = plugin.getBackPackBySizeForPlayer(rows + 1, player);
+            if (newItem == null) {
+                return;
+            }
 
             ItemStack newBackpack = newItem.clone();
             ItemMeta itemMeta = newBackpack.getItemMeta();
-            if (itemMeta == null)
+            if (itemMeta == null) {
                 return;
-
-            if (plugin.getEconomy() != null) {
-                if (!plugin.getEconomy().has(player, cost)) {
-                    Messages.NOT_ENOUGH_MONEY.sendMessage(player);
-                    return;
-                }
-
-                plugin.getEconomy().withdrawPlayer(player, cost);
-                Messages.PAID.sendMessage(player, new Pair("%cost%", cost));
             }
+
+
+            ItemStack costItemStack = event.getView().getTopInventory().getItem(costSlot);
+            if (costItemStack == null
+                    || !costItemStack.isSimilar(upgradeCost)
+                    || costItemStack.getAmount() < upgradeCost.getAmount()) {
+                Messages.NOT_ENOUGH_MATERIALS.sendMessage(player);
+                return;
+            }
+
+            costItemStack.setAmount(costItemStack.getAmount() - upgradeCost.getAmount());
+
+            String costName = upgradeCost.getAmount() + "x "
+                    + upgradeCost.getType().toString().toLowerCase().replaceAll("_", " ");
+            Messages.PAID.sendMessage(player, new Pair("%cost%", costName));
 
             String content = container.getOrDefault(plugin.getBackpackContentKey(), PersistentDataType.STRING, "");
             itemMeta.getPersistentDataContainer().set(plugin.getBackpackContentKey(), PersistentDataType.STRING, content);
@@ -133,15 +190,15 @@ public class GUIUpgrade implements IGUI {
             newBackpack.setItemMeta(itemMeta);
 
             event.getClickedInventory().setItem(backpackSlot, newBackpack);
-            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                    updateUpgradeItem(player.getOpenInventory().getTopInventory()), 1L);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> updateUpgradeItem(player), 1L);
             return;
         }
 
         event.setCancelled(true);
     }
 
-    private void updateUpgradeItem(Inventory inventory) {
+    private void updateUpgradeItem(HumanEntity player) {
+        Inventory inventory = player.getOpenInventory().getTopInventory();
         ItemStack itemStack = inventory.getItem(backpackSlot);
         if (itemStack == null || itemStack.getItemMeta() == null) {
             inventory.setItem(upgradeSlot, upgradeInvalidItem);
@@ -156,23 +213,32 @@ public class GUIUpgrade implements IGUI {
             return;
         }
 
-        int cost = container.getOrDefault(plugin.getBackpackCostKey(), PersistentDataType.INTEGER, -1);
-        ItemStack newItem = plugin.getBackpackItems().get(rows + 1);
-        if (rows == 6 || cost == -1 || newItem == null) {
+        String ownerUID = container.get(plugin.getOwnerKey(), PersistentDataType.STRING);
+        if (ownerUID == null || !UUID.fromString(ownerUID).equals(player.getUniqueId())) {
+            inventory.setItem(upgradeSlot, upgradeInvalidItem);
+            return;
+        }
+
+        ItemStack upgradeCost = plugin.getBackpackUpgradeCost().get((int) rows);
+        ItemStack newItem = plugin.getBackPackBySizeForPlayer(rows + 1, player);
+        if (rows == 6 || upgradeCost == null || newItem == null) {
             inventory.setItem(upgradeSlot, upgradeMaxItem);
             return;
         }
 
         ItemStack upgradeClone = upgradeItem.clone();
         ItemMeta upgradeMeta = upgradeClone.getItemMeta();
-        if (upgradeMeta == null || upgradeMeta.getLore() == null)
+        if (upgradeMeta == null || upgradeMeta.getLore() == null) {
             return;
+        }
+
+        String costName = upgradeCost.getAmount() + "x "
+                + upgradeCost.getType().toString().toLowerCase().replaceAll("_", " ");
 
         List<String> lore = new ArrayList<>();
         upgradeMeta.getLore().forEach(line ->
-                lore.add(line
-                        .replaceAll("%cost%", String.valueOf(cost))
-                        .replaceAll("%size%", String.valueOf((rows + 1) * 9))
+                lore.add(
+                        line.replaceAll("%cost%", costName).replaceAll("%size%", String.valueOf((rows + 1) * 9))
                 )
         );
         upgradeMeta.setLore(lore);
@@ -181,8 +247,10 @@ public class GUIUpgrade implements IGUI {
     }
 
     @Override
+    @NonNull
     public Inventory getInventory() {
-        Inventory clone = Bukkit.createInventory(this,
+        Inventory clone = Bukkit.createInventory(
+                this,
                 inventory.getSize(),
                 plugin.color(plugin.getConfig().getString("gui.title"))
         );

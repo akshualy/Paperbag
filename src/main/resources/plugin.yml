@@ -8,10 +8,15 @@ description: Backpacks for 1.13+
 commands:
   backpack:
     description: Main command for the plugin Paperbag
-    usage: /backpack [reload | give <player> | menu]
-    aliases: paperbag
-    permission: paperbag.admin
+    usage: /backpack [reload | give <player> [amount] | upgrade]
+    aliases:
+     - paperbag
+     - bp
+     - pb
+    permission: paperbag.use
 
 permissions:
+  paperbag.use:
+    default: op
   paperbag.admin:
     default: op
